@@ -1,8 +1,9 @@
 <template>
 <div>
   <!-- <button @click="switchJs()">switch</button> -->
-<!-- <button @click="handclick()">anxios</button> -->
+<button @click="handclick()">anxios</button>
 <div style="width: 1500px;height: 850px;">
+  <button size="small" @click="download('swagger.md',content)" type="primary">导出</button>
   <div style="width: 40%;height: 850px;float:left;display: inline-block;">
     <h3>输入json字符串<button @click="show" >转换成markdown</button></h3>
   <textarea v-model="text" style="height: 850px;width: 90%;"></textarea>
@@ -10,6 +11,7 @@
    <div style="width: 60%;float:left;display: inline-block;height: 850px;">
     <markdown-it-vue class="md-body" :content="content"/>
   </div>
+  
 </div>
  
 
@@ -63,6 +65,16 @@ export default {
       //   // console.log(this.paths)
 
       // },
+      download(filename,filecontent){
+        let content = new Blob([filecontent])
+        let  urlObject = window.URL || window.webkitURL || window
+        let url = urlObject.createObjectURL(content)
+        let el = document.createElement('a')
+        el.href = url
+        el.download =filename
+        el.click()
+        urlObject.revokeObjectURL(url)
+      },
       
       handclick(){
       axios.get('swagger/project_api/swagger.json').then(res=>
@@ -76,11 +88,12 @@ export default {
       },
       show(){
         var str = "";
-         this.Data=JSON.parse(this.text);
-        this.tags=this.Data.tags
-        this.json=this.Data
-        this.paths=this.Data.paths
-        this.schemas=this.Data.components.schemas
+
+        // this.Data=JSON.parse(this.text);
+        // this.tags=this.Data.tags
+        // this.json=this.Data
+        // this.paths=this.Data.paths
+        // this.schemas=this.Data.components.schemas
         // console.log(this.paths)
 
         str +="## "+this.json.info.title+"\n"
@@ -168,7 +181,42 @@ export default {
                                         }
                                         else{str+=" |"+"\n"}
                                      }
-
+                                     
+                                  }
+                                  for(var pro1get in this.schemas[sch1].properties){
+                                  if(this.schemas[sch1].properties[pro1get].$ref){
+                                    for(var rtschget in this.schemas){
+                                      if(this.schemas[sch1].properties[pro1get].$ref.includes(rtschget)){
+                                        str+="\n"+"对象："
+                                        if(this.schemas[rtschget].properties){
+                                          str+=this.schemas[rtschget].description+"\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                                          for(var pro1rt in this.schemas[rtschget].properties){
+                                            str+="|"+pro1rt+"|"
+                                            if(this.schemas[rtschget].properties[pro1rt].type){
+                                              str+=this.schemas[rtschget].properties[pro1rt].type+"|"
+                                            }
+                                            else{
+                                              str+=" |"
+                                            }
+                                            if(this.schemas[rtschget].properties[pro1rt].description){
+                                              str+=this.schemas[rtschget].properties[pro1rt].description+"|"+"\n"
+                                            }
+                                            else{str+=" |" +"\n"}
+                                          }
+                                        }
+                                        else{
+                                          console.log(this.schemas[rtschget].description)
+                                          str+=this.schemas[rtschget].description+"\n\n"
+                                          if(this.schemas[rtschget].type){
+                                            str+="类型："+this.schemas[rtschget].type+"\n"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                  // if(this.schemas[sch1].properties[pro1get].items.$ref){
+                                  //   console.log("1231321")
+                                  // }
                                   }
                                 }
                               }
