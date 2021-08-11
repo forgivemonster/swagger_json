@@ -111,13 +111,13 @@ export default {
                   str+="**接口名称summary："+this.paths[forpaths].get.summary+"**"+"\n\n"
                 }
                 if(this.paths[forpaths].get.parameters){
-                  str+="请求参数说明："+"\n\n"+"| 参数名称 | 类型 | 必填 | 参数说明|"+"\n"+"|--------| --------| --------| --------|"+"\n"
+                  str+="**请求参数说明：**"+"\n\n"+"| 参数名称 | 类型 | 必填 | 参数说明|"+"\n"+"|--------| --------| --------| --------|"+"\n"
                   for(var part in this.paths[forpaths].get.parameters){
                   
                     if(this.paths[forpaths].get.parameters[part].name){str+="|"+this.paths[forpaths].get.parameters[part].name+"|"}
                     if(this.paths[forpaths].get.parameters[part].schema.type){str+=this.paths[forpaths].get.parameters[part].schema.type+"|"}
                     else if(this.paths[forpaths].get.parameters[part].schema.$ref){str+="object|"}
-                    else if(this.paths[forpaths].get.parameters[part].schema.items.$ref){str+="object|"}
+                    else if(this.paths[forpaths].get.parameters[part].schema.items.$ref){str+="array|"}
                     else{str+=" |"}
                     if(this.paths[forpaths].get.parameters[part].required){str+=this.paths[forpaths].get.parameters[part].required+"|"}
                     else{str+="false|"}
@@ -125,26 +125,33 @@ export default {
                     else{str+=" |"+"\n"}
                   }
                   for(var askrefget in this.paths[forpaths].get.parameters){
+                   
                     if(this.paths[forpaths].get.parameters[askrefget].schema.$ref){
                       // console.log("1234")
                       for(var askschget in this.schemas){
                         if(this.paths[forpaths].get.parameters[askrefget].schema.$ref.includes(askschget)){
-                          str+="\n"+"对象："
+                          str+="\n"+"对象"+this.paths[forpaths].get.parameters[askrefget].name+"："
                           if(this.schemas[askschget].properties){
                             // console.log(this.schemas[askschget].description)
                             str+=this.schemas[askschget].description+"\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
                             for(var pro1ask in this.schemas[askschget].properties){
-                               if(!this.schemas[askschget].properties[pro1ask].$ref){
+                              //  if(!this.schemas[askschget].properties[pro1ask].$ref){
                                  str+="|"+pro1ask+"|"
                                  if(this.schemas[askschget].properties[pro1ask].type){
                                    str+=this.schemas[askschget].properties[pro1ask].type+"|"
+                                 }
+                                 else if(this.schemas[askschget].properties[pro1ask].$ref){
+                                   str+="object|"
+                                 }
+                                 else if(this.schemas[askschget].properties[pro1ask].items.$ref){
+                                   str+="array|"
                                  }
                                  else{str+=" |"}
                                  if(this.schemas[askschget].properties[pro1ask].description){
                                    str+=this.schemas[askschget].properties[pro1ask].description+"|"+"\n"
                                  }
                                  else{str+=" |"+"\n"}
-                               }
+                              //  }
 
                             }
                           }
@@ -155,7 +162,39 @@ export default {
                         }
                       }
                     }
-
+                    if(this.paths[forpaths].get.parameters[askrefget].schema.items){
+                      // console.log("11111")
+                      if(this.paths[forpaths].get.parameters[askrefget].schema.items.$ref){
+                      for(var askschget1 in this.schemas){
+                        if(this.paths[forpaths].get.parameters[askrefget].schema.items.$ref.includes(askschget1)){
+                          str+="\n"+"数组"+this.paths[forpaths].get.parameters[askrefget].name+"："
+                          if(this.schemas[askschget1].properties){
+                            str+=this.schemas[askschget1].description+"\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                            for(var pro1ask1 in this.schemas[askschget].properties){
+                              str+="|"+pro1ask1+"|"
+                               if(this.schemas[askschget].properties[pro1ask1].type){
+                                 str+=this.schemas[askschget].properties[pro1ask1].type+"|"
+                               }
+                               else if(this.schemas[askschget].properties[pro1ask1].$ref){
+                                 str+="project|"
+                               }
+                               else if(this.schemas[askschget].properties[pro1ask1].items.$ref){
+                                 str+="array|"
+                               }
+                               else{str+=" |"}
+                               if(this.schemas[askschget].properties[pro1ask1].description){
+                                 str+=this.schemas[askschget].properties[pro1ask1].description+"|"+"\n"
+                               }
+                               else{str+=" |"+"\n"}
+                            }
+                          }
+                          else{
+                            str+=this.schemas[askschget1].description+"\n\n"+"类型："+this.schemas[askschget1].type+"\n"
+                          }
+                        }
+                      }
+                      }
+                    }
                   }
                 }
                 if(this.paths[forpaths].get.responses){
@@ -168,32 +207,44 @@ export default {
                               // console.log(this.paths[forpaths].get.responses[res].content[cont].schema.items.$ref)
                               for(var sch1 in this.schemas){
                                 if(this.paths[forpaths].get.responses[res].content[cont].schema.items.$ref.includes(sch1)){
-                                  str+="\n"+"返回参数说明："+"\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                                  str+="\n"+"**返回参数说明：**"+"\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
                                   for(var pro1 in this.schemas[sch1].properties){
-                                    if(!this.schemas[sch1].properties[pro1].$ref){
                                        str+="|"+pro1+"|"
                                      if(this.schemas[sch1].properties[pro1].type){
                                        str+=this.schemas[sch1].properties[pro1].type+"|"
                                         }
+                                        else if(this.schemas[sch1].properties[pro1].$ref){
+                                          str+="object|"
+                                        }
+                                        // else if(this.schemas[sch1].properties[pro1].items.$ref){
+                                        //   str+="array|"
+                                        // }
+                                        
                                        else{str+=" |"}
                                      if(this.schemas[sch1].properties[pro1].description){
                                         str+=this.schemas[sch1].properties[pro1].description+"|"+"\n"
                                         }
                                         else{str+=" |"+"\n"}
-                                     }
+                                     
                                      
                                   }
                                   for(var pro1get in this.schemas[sch1].properties){
                                   if(this.schemas[sch1].properties[pro1get].$ref){
                                     for(var rtschget in this.schemas){
                                       if(this.schemas[sch1].properties[pro1get].$ref.includes(rtschget)){
-                                        str+="\n"+"对象："
+                                        str+="\n"+"返回对象"+pro1+"："
                                         if(this.schemas[rtschget].properties){
                                           str+=this.schemas[rtschget].description+"\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
                                           for(var pro1rt in this.schemas[rtschget].properties){
                                             str+="|"+pro1rt+"|"
                                             if(this.schemas[rtschget].properties[pro1rt].type){
                                               str+=this.schemas[rtschget].properties[pro1rt].type+"|"
+                                            }
+                                            else if(this.schemas[rtschget].properties[pro1rt].$ref){
+                                              str+="object|"
+                                            }
+                                            else if(this.schemas[rtschget].properties[pro1rt].items.$ref){
+                                              str+="array|"
                                             }
                                             else{
                                               str+=" |"
@@ -205,7 +256,7 @@ export default {
                                           }
                                         }
                                         else{
-                                          console.log(this.schemas[rtschget].description)
+                                          // console.log(this.schemas[rtschget].description)
                                           str+=this.schemas[rtschget].description+"\n\n"
                                           if(this.schemas[rtschget].type){
                                             str+="类型："+this.schemas[rtschget].type+"\n"
@@ -225,36 +276,59 @@ export default {
                       if(this.paths[forpaths].get.responses[res].content[cont].schema.$ref){
                         for(var sch in this.schemas){
                           if(this.paths[forpaths].get.responses[res].content[cont].schema.$ref.includes(sch)){
-                             str+="\n"+"返回参数说明："+"\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                             str+="\n"+"**返回参数说明：**"+"\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
                             for(var pro in this.schemas[sch].properties){
-                              if(!this.schemas[sch].properties[pro].$ref){
+                              // if(!this.schemas[sch].properties[pro].$ref){
                                 str+="|"+pro+"|"
                                 if(this.schemas[sch].properties[pro].type){
                                   str+=this.schemas[sch].properties[pro].type+"|"
+                                }
+                                else if(this.schemas[sch].properties[pro].$ref){
+                                  str+="project|"
                                 }
                                 else{str+=" |"}
                                 if(this.schemas[sch].properties[pro].description){
                                   str+=this.schemas[sch].properties[pro].description+"|"+"\n"
                                 }
                                 else{str+=" |"+"\n"}
-                              }
-                              // if(this.schemas[sch].properties[pro].$ref){
-                              //   str+="返回对象:"+this.schemas[sch].description+"\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
-                              //   if(this.schemas[sch].properties[pro].$ref.includes(sch)){
-                              //     for(var obj in this.schemas[sch].properties){
-                              //       str+="|"+obj+"|"
-                              //   if(this.schemas[sch].properties[obj].type){
-                              //     str+=this.schemas[sch].properties[obj].type+"|"
-                              //   }
-                              //   else{str+=" |"}
-                              //   if(this.schemas[sch].properties[obj].description){
-                              //     str+=this.schemas[sch].properties[obj].description+"|"+"\n"
-                              //   }
-                              //   else{str+=" |"+"\n"}
-                              //     }
-                              //   }
                               // }
-
+                            }
+                            for(var pro1get1 in this.schemas[sch].properties){
+                               if(this.schemas[sch].properties[pro1get1].$ref){
+                                 for(var rtschget1 in this.schemas){
+                                   if(this.schemas[sch].properties[pro1get1].$ref.includes(rtschget1)){
+                                     str+="\n"+"返回对象"+pro+"："
+                                     if(this.schemas[rtschget1].properties){
+                                       str+=this.schemas[rtschget1].description+"\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                                       for(var pro1rt1 in this.schemas[rtschget1].properties){
+                                        str+="|"+pro1rt1+"|"
+                                        if(this.schemas[rtschget1].properties[pro1rt1].type){
+                                          str+=this.schemas[rtschget1].properties[pro1rt1].type+"|"
+                                        }
+                                        else if(this.schemas[rtschget1].properties[pro1rt1].$ref){
+                                          str+="object|"
+                                        }
+                                        else if(this.schemas[rtschget1].properties[pro1rt1].items.$ref){
+                                          str+="array|"
+                                        }
+                                        else{
+                                          str+=" |"
+                                        }
+                                        if(this.schemas[rtschget1].properties[pro1rt1].description){
+                                          str+=this.schemas[rtschget1].properties[pro1rt1].description+"|"+"\n"
+                                        }
+                                        else{str+=" |" +"\n"}
+                                      }
+                                     }
+                                     else{
+                                       str+=this.schemas[rtschget1].description+"\n\n"
+                                       if(this.schemas[rtschget1].type){
+                                         str+="类型："+this.schemas[rtschget1].type+"\n"
+                                       }
+                                     }
+                                   }
+                                 }
+                               }
                             }
                           }
                           
@@ -284,7 +358,7 @@ export default {
                   if(this.paths[forpaths].post.requestBody.description){
                     str+="description"+this.paths[forpaths].post.requestBody.description+"\n\n"
                   }
-                  str+="请求参数说明："+"\n\n"+ " | 参数名称 | 类型 | 必填 | 参数说明|"+"\n"+"|--------| --------| --------| --------|"+"\n"
+                  str+="**请求参数说明：**"+"\n\n"+ " | 参数名称 | 类型 | 必填 | 参数说明|"+"\n"+"|--------| --------| --------| --------|"+"\n"
                   
                   for(var rebody in this.paths[forpaths].post.requestBody.content){
                     if(rebody=="text/json"){
@@ -443,17 +517,23 @@ export default {
                     if(this.paths[forpaths].put.requestBody.description){
                       str+="description："+this.paths[forpaths].put.requestBody.description+"\n\n"
                     }
-                     str+="请求参数说明："+"\n\n"+ " | 参数名称 | 类型 | 必填 | 参数说明|"+"\n"+"|--------| --------| --------| --------|"+"\n"
+                     str+="**请求参数说明：**"+"\n\n"+ " | 参数名称 | 类型 | 必填 | 参数说明|"+"\n"+"|--------| --------| --------| --------|"+"\n"
                      for(var rebodyput in this.paths[forpaths].put.requestBody.content){
                        if(rebodyput=="text/json"){
                          if(this.paths[forpaths].put.requestBody.content[rebodyput].schema.$ref){
                            for(var sch2put in this.schemas){
                              if(this.paths[forpaths].put.requestBody.content[rebodyput].schema.$ref.includes(sch2put)){
                                for(var pro2put in this.schemas[sch2put].properties){
-                                 if(!this.schemas[sch2put].properties[pro2put].$ref){
+                                //  if(!this.schemas[sch2put].properties[pro2put].$ref){
                                    str+="|"+pro2put+"|"
                                    if(this.schemas[sch2put].properties[pro2put].type){
                                      str+=this.schemas[sch2put].properties[pro2put].type+"|"
+                                   }
+                                   else if(this.schemas[sch2put].properties[pro2put].$ref){
+                                     str+="project|"
+                                   }
+                                   else if(this.schemas[sch2put].properties[pro2put].items.$ref){
+                                     str+="array|"
                                    }
                                    else{str+=" |"}
                                    if(this.schemas[sch2put].required){
@@ -471,9 +551,76 @@ export default {
                                      str+=this.schemas[sch2put].properties[pro2put].description+"|"+"\n"
                                    }
                                    else{str+=" |"+"\n"}
-                                 }
+                                   if(this.schemas[sch2put].properties[pro2put].$ref){
+                                     for(var askschput in this.schemas){
+                                       if(this.schemas[sch2put].properties[pro2put].$ref.includes(askschput)){
+                                         str+="\n"+"对象"+pro2put+"："
+                                         if(this.schemas[sch2put].properties){
+                                           str+="\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                                            for(var putproask in this.schemas[askschget].properties){
+                                              str+="|"+putproask+"|"
+                                              if(this.schemas[askschget].properties[putproask].type){
+                                                str+=this.schemas[askschget].properties[putproask].type+"|"
+                                              }
+                                              else if(this.schemas[askschget].properties[putproask].$ref){
+                                                str+="object|"
+                                              }
+                                              else if(this.schemas[askschget].properties[putproask].items.$ref){
+                                                str+="array|"
+                                              }
+                                              else{str+=" |"}
+                                              if(this.schemas[askschget].properties[putproask].description){
+                                                str+=this.schemas[askschget].properties[putproask].description+"|"+"\n"
+                                              }
+                                              else{str+="|"+"\n"}
+
+                                            }
+
+                                         }
+                                         else{
+                                           str+=this.schemas[askschget].description+"\n\n"+"类型："+this.schemas[askschget].type+"\n"
+                                         }
+                                       }
+                                     }
+                                   }
+                                   if(this.schemas[sch2put].properties[pro2put].items){
+                                     if(this.schemas[sch2put].properties[pro2put].items.$ref){
+                                       for(var askschput1 in this.schemas){
+                                       if(this.schemas[sch2put].properties[pro2put].items.$ref.includes(askschput1)){
+                                         str+="\n"+"数组"+pro2put+"："
+                                         if(this.schemas[sch2put].properties){
+                                           str+="\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                                            for(var putproask1 in this.schemas[askschget].properties){
+                                              str+="|"+putproask1+"|"
+                                              if(this.schemas[askschget].properties[putproask1].type){
+                                                str+=this.schemas[askschget].properties[putproask1].type+"|"
+                                              }
+                                              else if(this.schemas[askschget].properties[putproask1].$ref){
+                                                str+="object|"
+                                              }
+                                              else if(this.schemas[askschget].properties[putproask1].items.$ref){
+                                                str+="array|"
+                                              }
+                                              else{str+=" |"}
+                                              if(this.schemas[askschget].properties[putproask1].description){
+                                                str+=this.schemas[askschget].properties[putproask1].description+"|"+"\n"
+                                              }
+                                              else{str+="|"+"\n"}
+
+                                            }
+
+                                         }
+                                         else{
+                                           str+=this.schemas[askschget].description+"\n\n"+"类型："+this.schemas[askschget].type+"\n"
+                                         }
+                                       }
+                                     }
+                                     }
+                                   }
+                                //  }
 
                                }
+                               
                              }
                            }
                          }
@@ -490,12 +637,18 @@ export default {
                              if(this.paths[forpaths].put.responses[resput].content[contput].schema.items.$ref){
                                for(var schput1 in this.schemas){
                                  if(this.paths[forpaths].put.responses[resput].content[contput].schema.items.$ref.includes(schput1)){
-                                   str+="\n"+"返回参数说明："+"\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                                   str+="\n"+"**返回参数说明：**"+"\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
                                    for(var proput1 in this.schemas[schput1].properties){
-                                     if(!this.schemas[schput1].properties[proput1].$ref){
+                                    //  if(!this.schemas[schput1].properties[proput1].$ref){
                                        str+="|"+proput1+"|"
                                        if(this.schemas[schput1].properties[proput1].type){
                                          str+=this.schemas[schput1].properties[proput1].type+"|"
+                                       }
+                                       else if(this.schemas[schput1].properties[proput1].$ref){
+                                         str+="project|"
+                                       }
+                                       else if(this.schemas[schput1].properties[proput1].items.$ref){
+                                         str+="array|"
                                        }
                                        else{
                                          str+=" |"
@@ -506,8 +659,95 @@ export default {
                                        else{
                                          str+=" |"+"\n"
                                        }
-                                     }
+                                    //  }
                                    }
+                                   for(var pro1put in this.schemas[schput].properties){
+                                  if(this.schemas[schput].properties[pro1put].$ref){
+                                    for(var rtschput in this.schemas){
+                                      if(this.schemas[schput].properties[pro1put].$ref.includes(rtschput)){
+                                        str+="\n"+"返回对象"+proput+"："
+                                        
+                                        if(this.schemas[rtschput].properties){
+                                        //   if(this.schemas[rtschput].description){
+                                        //   str+=this.schemas[rtschput].description
+                                        // }
+                                          str+="\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                                          for(var putrt in this.schemas[rtschput].properties){
+                                            str+="|"+putrt+"|"
+                                            if(this.schemas[rtschput].properties[putrt].type){
+                                              str+=this.schemas[rtschput].properties[putrt]+"|"
+                                            }
+                                            else if(this.schemas[rtschput].properties[putrt].$ref){
+                                              str+="object|"
+                                            }
+                                            else if(this.schemas[rtschput].properties[putrt].items.$ref){
+                                              str+="array|"
+                                            }
+                                            else{
+                                              str+=" |"
+                                            }
+                                            if(this.schemas[rtschput].properties[putrt].description){
+                                              str+=this.schemas[rtschput].properties[putrt].description+"|"+"\n"
+                                            }
+                                            else{
+                                              str+="|"+"\n"
+                                            }
+                                          }
+                                        }
+                                        else{
+                                          str+=this.schemas[rtschput].description+"\n\n"
+                                          if(this.schemas[rtschput].type){
+                                            str+=this.schemas[rtschput].type+"\n"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                                for(var pro1put2 in this.schemas[schput].properties){
+                                  if(this.schemas[schput].properties[pro1put2].items){
+                                    if(this.schemas[schput].properties[pro1put2].items.$ref){
+                                    for(var rtschput2 in this.schemas){
+                                      if(this.schemas[schput].properties[pro1put2].items.$ref.includes(rtschput2)){
+                                        str+="\n"+"返回数组"+proput+"："
+                                        if(this.schemas[rtschput2].properties){
+                                        //   if(this.schemas[rtschput2].description){
+                                        //   str+=this.schemas[rtschput2].description
+                                        // }
+                                          str+="\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                                          for(var putrt2 in this.schemas[rtschput2].properties){
+                                            str+="|"+putrt2+"|"
+                                            if(this.schemas[rtschput2].properties[putrt2].type){
+                                              str+=this.schemas[rtschput2].properties[putrt2]+"|"
+                                            }
+                                            else if(this.schemas[rtschput2].properties[putrt2].$ref){
+                                              str+="object|"
+                                            }
+                                            else if(this.schemas[rtschput2].properties[putrt2].items.$ref){
+                                              str+="array|"
+                                            }
+                                            else{
+                                              str+=" |"
+                                            }
+                                            if(this.schemas[rtschput2].properties[putrt2].description){
+                                              str+=this.schemas[rtschput2].properties[putrt2].description+"|"+"\n"
+                                            }
+                                            else{
+                                              str+="|"+"\n"
+                                            }
+                                          }
+                                        }
+                                        else{
+                                          str+=this.schemas[rtschput2].description+"\n\n"
+                                          if(this.schemas[rtschput2].type){
+                                            str+=this.schemas[rtschput2].type+"\n"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                  }
+                                }
                                  }
 
                                }
@@ -518,7 +758,7 @@ export default {
                               if(this.paths[forpaths].put.responses[resput].content[contput].schema.$ref.includes(schput)){
                                 str+="\n"+"返回参数说明："+"\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
                                 for(var proput in this.schemas[schput].properties){
-                                  if(!this.schemas[schput].properties[proput].$ref){
+                                  // if(!this.schemas[schput].properties[proput].$ref){
                                     str+="|"+proput+"|"
                                     if(this.schemas[schput].properties[proput].type){
                                        str+=this.schemas[schput].properties[proput].type+"|"
@@ -532,8 +772,95 @@ export default {
                                     else{
                                       str+=" |"+"\n"
                                       }
+                                  // }
+                                }
+                                for(var pro1put1 in this.schemas[schput].properties){
+                                  if(this.schemas[schput].properties[pro1put1].$ref){
+                                    for(var rtschput1 in this.schemas){
+                                      if(this.schemas[schput].properties[pro1put1].$ref.includes(rtschput1)){
+                                        str+="\n"+"返回对象"+proput+"："
+                                        if(this.schemas[rtschput1].properties){
+                                        //   if(this.schemas[rtschput1].description){
+                                        //   str+=this.schemas[rtschput1].description
+                                        // }
+                                          str+="\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                                          for(var putrt1 in this.schemas[rtschput1].properties){
+                                            str+="|"+putrt1+"|"
+                                            if(this.schemas[rtschput1].properties[putrt1].type){
+                                              str+=this.schemas[rtschput1].properties[putrt1]+"|"
+                                            }
+                                            else if(this.schemas[rtschput1].properties[putrt1].$ref){
+                                              str+="object|"
+                                            }
+                                            else if(this.schemas[rtschput1].properties[putrt1].items.$ref){
+                                              str+="array|"
+                                            }
+                                            else{
+                                              str+=" |"
+                                            }
+                                            if(this.schemas[rtschput1].properties[putrt1].description){
+                                              str+=this.schemas[rtschput1].properties[putrt1].description+"|"+"\n"
+                                            }
+                                            else{
+                                              str+="|"+"\n"
+                                            }
+                                          }
+                                        }
+                                        else{
+                                          str+=this.schemas[rtschput1].description+"\n\n"
+                                          if(this.schemas[rtschput1].type){
+                                            str+=this.schemas[rtschput1].type+"\n"
+                                          }
+                                        }
+                                      }
+                                    }
                                   }
                                 }
+                                for(var pro1put3 in this.schemas[schput].properties){
+                                  if(this.schemas[schput].properties[pro1put3].items){
+                                    if(this.schemas[schput].properties[pro1put3].items.$ref){
+                                    for(var rtschput3 in this.schemas){
+                                      if(this.schemas[schput].properties[pro1put3].items.$ref.includes(rtschput3)){
+                                        str+="\n"+"返回数组"+proput+"："
+                                        if(this.schemas[rtschput3].properties){
+                                        //   if(this.schemas[rtschput3].description){
+                                        //   str+=this.schemas[rtschput3].description
+                                        // }
+                                          str+="\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                                          for(var putrt3 in this.schemas[rtschput3].properties){
+                                            str+="|"+putrt3+"|"
+                                            if(this.schemas[rtschput3].properties[putrt3].type){
+                                              str+=this.schemas[rtschput3].properties[putrt3]+"|"
+                                            }
+                                            else if(this.schemas[rtschput3].properties[putrt3].$ref){
+                                              str+="object|"
+                                            }
+                                            else if(this.schemas[rtschput3].properties[putrt3].items.$ref){
+                                              str+="array|"
+                                            }
+                                            else{
+                                              str+=" |"
+                                            }
+                                            if(this.schemas[rtschput3].properties[putrt3].description){
+                                              str+=this.schemas[rtschput3].properties[putrt3].description+"|"+"\n"
+                                            }
+                                            else{
+                                              str+="|"+"\n"
+                                            }
+                                          }
+                                        }
+                                        else{
+                                          str+=this.schemas[rtschput3].description+"\n\n"
+                                          if(this.schemas[rtschput3].type){
+                                            str+=this.schemas[rtschput3].type+"\n"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                  }
+                                }
+                                
                               }
                             }
 
