@@ -1,7 +1,7 @@
 <template>
 <div>
   <!-- <button @click="switchJs()">switch</button> -->
-<button @click="handclick()">anxios</button>
+<!-- <button @click="handclick()">anxios</button> -->
 <div style="width: 1500px;height: 850px;">
   <button size="small" @click="download('swagger.md',content)" type="primary">导出</button>
   <div style="width: 40%;height: 850px;float:left;display: inline-block;">
@@ -76,24 +76,24 @@ export default {
         urlObject.revokeObjectURL(url)
       },
       
-      handclick(){
-      axios.get('swagger/project_api/swagger.json').then(res=>
-      {
-         console.log("already")
-        this.tags=res.data.tags
-        this.json=res.data
-        this.paths=res.data.paths
-        this.schemas=res.data.components.schemas
-      })
-      },
+      // handclick(){
+      // axios.get('swagger/project_api/swagger.json').then(res=>
+      // {
+      //    console.log("already")
+      //   this.tags=res.data.tags
+      //   this.json=res.data
+      //   this.paths=res.data.paths
+      //   this.schemas=res.data.components.schemas
+      // })
+      // },
       show(){
         var str = "";
 
-        // this.Data=JSON.parse(this.text);
-        // this.tags=this.Data.tags
-        // this.json=this.Data
-        // this.paths=this.Data.paths
-        // this.schemas=this.Data.components.schemas
+        this.Data=JSON.parse(this.text);
+        this.tags=this.Data.tags
+        this.json=this.Data
+        this.paths=this.Data.paths
+        this.schemas=this.Data.components.schemas
         // console.log(this.paths)
 
         str +="## "+this.json.info.title+"\n"
@@ -380,15 +380,20 @@ export default {
                                     else{str+=" |"}
                                     if(this.schemas[sch2].required){
                                       for(var req in this.schemas[sch2].required){
+                                        // console.log(this.schemas[sch2].required[req])
+                                        // console.log("pro2 "+pro2)
                                         if(this.schemas[sch2].required[req]==pro2){
                                           str+="ture|"
-                                        }
-                                        else{
-                                          str+="false|"
                                         }
                                       }
                                     }
                                     else{str+="false|"}
+                                    var isture = str.substr(-5)
+                                    if(isture!=='ture|'){
+                                      str+="false|"
+                                    }
+                                    
+                                    
                                     if(this.schemas[sch2].properties[pro2].description){
                                     str+=this.schemas[sch2].properties[pro2].description+"|"+"\n"
                                   }
@@ -398,7 +403,7 @@ export default {
                                     if(this.schemas[sch2].properties[pro2ask].$ref){
                                       for(var askschpost in this.schemas){
                                         if(this.schemas[sch2].properties[pro2ask].$ref.includes(askschpost)){
-                                          str+="\n"+"返回数组"+pro2ask+"："
+                                          str+="\n"+"数组"+pro2ask+"："
                                           if(this.schemas[askschpost].properties){
                                             str+="\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
                                             for(var askpropost in this.schemas[askschpost].properties){
@@ -414,7 +419,7 @@ export default {
                                               }
                                               else{str+=" |"}
                                               if(this.schemas[askschpost].properties[askpropost].description){
-                                                str+=this.schemas[askschpost].properties[askpropost]+"|"+"\n"
+                                                str+=this.schemas[askschpost].properties[askpropost].description+"|"+"\n"
                                               }
                                               else{str+="|"+"\n"}
                                             }
@@ -434,7 +439,7 @@ export default {
                                     if(this.schemas[sch2].properties[pro2ask1].$ref){
                                       for(var askschpost1 in this.schemas){
                                         if(this.schemas[sch2].properties[pro2ask1].$ref.includes(askschpost1)){
-                                          str+="\n"+"返回对象"+pro2ask1+"："
+                                          str+="\n"+"对象"+pro2ask1+"："
                                           if(this.schemas[askschpost1].properties){
                                             str+="\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
                                             for(var askpropost1 in this.schemas[askschpost1].properties){
@@ -450,7 +455,8 @@ export default {
                                               }
                                               else{str+=" |"}
                                               if(this.schemas[askschpost1].properties[askpropost1].description){
-                                                str+=this.schemas[askschpost1].properties[askpropost1]+"|"+"\n"
+                                                // console.log(this.schemas[askschpost1].properties[askpropost1].description)
+                                                str+=this.schemas[askschpost1].properties[askpropost1].description+"|"+"\n"
                                               }
                                               else{str+="|"+"\n"}
                                             }
@@ -579,7 +585,7 @@ export default {
                           if(this.paths[forpaths].post.responses[resp].content[contp].schema.$ref.includes(schp)){
                              str+="\n\n"+"返回参数说明："+"\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
                             for(var prop in this.schemas[schp].properties){
-                              if(!this.schemas[schp].properties[prop].$ref){
+                              // if(!this.schemas[schp].properties[prop].$ref){
                                 str+="|"+prop+"|"
                                 if(this.schemas[schp].properties[prop].type){
                                   str+=this.schemas[schp].properties[prop].type+"|"
@@ -589,25 +595,83 @@ export default {
                                   str+=this.schemas[schp].properties[prop].description+"|"+"\n"
                                 }
                                 else{str+=" |"+"\n"}
-                              }
-                              // if(this.schemas[sch].properties[pro].$ref){
-                              //   str+="返回对象:"+this.schemas[sch].description+"\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
-                              //   if(this.schemas[sch].properties[pro].$ref.includes(sch)){
-                              //     for(var obj in this.schemas[sch].properties){
-                              //       str+="|"+obj+"|"
-                              //   if(this.schemas[sch].properties[obj].type){
-                              //     str+=this.schemas[sch].properties[obj].type+"|"
-                              //   }
-                              //   else{str+=" |"}
-                              //   if(this.schemas[sch].properties[obj].description){
-                              //     str+=this.schemas[sch].properties[obj].description+"|"+"\n"
-                              //   }
-                              //   else{str+=" |"+"\n"}
-                              //     }
-                              //   }
                               // }
+                              
 
                             }
+                            for(var pro1post2 in this.schemas[schp1].properties){
+                                    if(this.schemas[schp1].properties[pro1post2].$ref){
+                                      for(var rtschpost2 in this.schemas){
+                                        if(this.schemas[schp1].properties[pro1post2].$ref.includes(rtschpost2)){
+                                          str+="\n"+"返回对象"+pro1post2+"："
+                                          if(this.schemas[rtschpost2].properties){
+                                            str+="\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                                            for(var postrt2 in this.schemas[rtschpost2].properties){
+                                              str+="|"+postrt2+"|"
+                                              if(this.schemas[rtschpost2].properties[postrt2].type){
+                                                str+=this.schemas[rtschpost2].properties[postrt2].type+"|"
+                                              }
+                                              else if(this.schemas[rtschpost2].properties[postrt2].$ref){
+                                              str+="project|"
+                                               }
+                                              else if(this.schemas[rtschpost2].properties[postrt2].items.$ref){
+                                                str+="array|"
+                                                }
+                                              else{str+=" |"}
+                                              if(this.schemas[rtschpost2].properties[postrt2].description){
+                                                str+=this.schemas[rtschpost2].properties[postrt2].description+"|"+"\n"
+                                              }
+                                              else{str+="|"+"\n"}
+                                            }
+                                          }
+                                          else{
+                                            str+=this.schemas[rtschpost2].description+"\n\n"
+                                            if(this.schemas[rtschpost2].type){
+                                              str+=this.schemas[rtschpost2].type+"\n"
+                                            }
+                                            
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                   for(var pro1post3 in this.schemas[schp1].properties){
+                                    if(this.schemas[schp1].properties[pro1post3].$ref){
+                                      for(var rtschpost3 in this.schemas){
+                                        if(this.schemas[schp1].properties[pro1post3].$ref.includes(rtschpost3)){
+                                          str+="\n"+"返回对象"+pro1post3+"："
+                                          if(this.schemas[rtschpost3].properties){
+                                            str+="\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                                            for(var postrt3 in this.schemas[rtschpost3].properties){
+                                              str+="|"+postrt3+"|"
+                                              if(this.schemas[rtschpost3].properties[postrt3].type){
+                                                str+=this.schemas[rtschpost3].properties[postrt3].type+"|"
+                                              }
+                                              else if(this.schemas[rtschpost3].properties[postrt3].$ref){
+                                              str+="project|"
+                                               }
+                                              else if(this.schemas[rtschpost3].properties[postrt3].items.$ref){
+                                                str+="array|"
+                                                }
+                                              else{str+=" |"}
+                                              if(this.schemas[rtschpost3].properties[postrt3].description){
+                                                str+=this.schemas[rtschpost3].properties[postrt3].description+"|"+"\n"
+                                              }
+                                              else{str+="|"+"\n"}
+                                            }
+                                          }
+                                          else{
+                                            str+=this.schemas[rtschpost3].description+"\n\n"
+                                            if(this.schemas[rtschpost3].type){
+                                              str+=this.schemas[rtschpost3].type+"\n"
+                                            }
+                                            
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                  
                           }
                           
                         }
@@ -660,11 +724,12 @@ export default {
                                      for(var reqput in this.schemas[sch2put].required){
                                         if(this.schemas[sch2put].required[reqput]==pro2put){
                                           str+="ture|"
-                                        }
-                                        else{
-                                           str+="false|"
-                                        }
+                                        } 
                                      }
+                                     var istureput = str.substr(-5)
+                                    if(istureput!=='ture|'){
+                                      str+="false|"
+                                    }
 
                                    }else{str+="false|"}
                                    if(this.schemas[sch2put].properties[pro2put].description){
