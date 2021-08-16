@@ -1,8 +1,8 @@
 <template>
 <div>
   <!-- <button @click="switchJs()">switch</button> -->
-<!-- <button @click="handclick()">anxios</button> -->
-<div style="width: 1500px;height: 850px;">
+<input v-model="axiosurl"><button @click="handclick()">anxios</button>
+<div >
   <button size="small" @click="download('swagger.md',content)" type="primary">导出</button>
   <div style="width: 40%;height: 850px;float:left;display: inline-block;">
     <h3>输入json字符串<button @click="show" >转换成markdown</button></h3>
@@ -49,7 +49,8 @@ export default {
       paths:[],
       schemas:[],
       Data:[],
-      content: ''
+      content: '',
+      axiosurl:''
     }
   },
     methods:{
@@ -76,16 +77,17 @@ export default {
         urlObject.revokeObjectURL(url)
       },
       
-      // handclick(){
-      // axios.get('swagger/project_api/swagger.json').then(res=>
-      // {
-      //    console.log("already")
-      //   this.tags=res.data.tags
-      //   this.json=res.data
-      //   this.paths=res.data.paths
-      //   this.schemas=res.data.components.schemas
-      // })
-      // },
+      handclick(){
+      axios.get('swagger/project_api/swagger.json').then(res=>
+      {
+         alert("already")
+         this.text=JSON.stringify(res.data)
+        // this.tags=res.data.tags
+        // this.json=res.data
+        // this.paths=res.data.paths
+        // this.schemas=res.data.components.schemas
+      })
+      },
       show(){
         var str = "";
 
@@ -1264,7 +1266,7 @@ export default {
             }
           }
         }
-        console.log(str)
+        // console.log(str)
         // this.html = require('marked')(str)
         
         this.content=str
