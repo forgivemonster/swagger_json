@@ -1,38 +1,42 @@
 <template>
 <div>
-  <!-- <button @click="switchJs()">switch</button> -->
-<input v-model="axiosurl"><button @click="handclick()">anxios</button>
+
 <div >
-  <button size="small" @click="download('swagger.md',content)" type="primary">导出</button>
-  <div style="width: 40%;height: 850px;float:left;display: inline-block;">
-    <h3>输入json字符串<button @click="show" >转换成markdown</button></h3>
+  
+  <a class="iconfont-check"></a>
+
+  <div style="width: 40%;height: 850px;float:left;display: inline-block;margin-left:10px">
+    <div>输入swagger.json的接口地址：
+    <input v-model="axiosurl"><a-button size="small" type="primary" @click="handclick()" icon="file-add">anxios</a-button>
+    </div>
+    <div >
+    <div style="float:left;width: 70%;">
+或者在下面输入需要转换的JSON文件：
+    </div>
+    <div style="float:left"><a-button @click="show" type="primary" size="small" icon="swap">点击转换</a-button></div>
+    </div>
   <textarea v-model="text" style="height: 850px;width: 90%;"></textarea>
   </div>
-   <div style="width: 60%;float:left;display: inline-block;height: 850px;">
+
+   <div style="width: 59%;float:left;display: inline-block;height: 850px;">
+     <a-button  type="danger" icon="download"  @click="download('swagger.md',content)" size="large"  >导出</a-button>
     <markdown-it-vue class="md-body" :content="content"/>
   </div>
-  
 </div>
- 
-
-<!-- <bianli :tags="tags"  :json="json" :paths="paths" :schemas="schemas"></bianli> -->
 </div>
-<!-- <div>
-   <VueMarkdown :source="content"></VueMarkdown>
-  </div> -->
 
 </template>
 <script>
 import Vue from 'vue'//引入vue
 import axios from 'axios'//引入axios
 import marked from 'marked'
-// import VueMarkdown from 'vue-markdown'
-
+import {Button} from 'ant-design-vue'
 import MarkdownItVue from 'markdown-it-vue'
 import 'markdown-it-vue/dist/markdown-it-vue.css'
 
 // import bianli from './components/bianli.vue'
 Vue.component("axios",axios);
+Vue.use(Button);
 
 export default {
   components: {
@@ -41,7 +45,7 @@ export default {
   // components: { bianli },
   data(){
     return{
-      
+      loading: false,
       html:"",
       text:"",
       tags:[],
@@ -50,7 +54,9 @@ export default {
       schemas:[],
       Data:[],
       content: '',
-      axiosurl:''
+      axiosurl:'',
+      aaa:'swagger/project_api/swagger.json',
+      bbb:'https://api.ee.spdqd.test.spdio.com/'
     }
   },
     methods:{
@@ -78,7 +84,7 @@ export default {
       },
       
       handclick(){
-      axios.get('swagger/project_api/swagger.json').then(res=>
+      axios.get(this.axiosurl).then(res=>
       {
          alert("already")
          this.text=JSON.stringify(res.data)
@@ -98,22 +104,22 @@ export default {
         this.schemas=this.Data.components.schemas
         // console.log(this.paths)
 
-        str +="## "+this.json.info.title+"\n"
+        str +="# "+this.json.info.title+"\n"
         str +=this.json.openapi+"\xa0"+this.json.info.version+"\n"
         for (var item in this.tags){
-          str+="\n"+"### "+this.tags[item].description+"\xa0"+this.tags[item].name+"\n"
+          str+="\n"+"## "+this.tags[item].description+"\xa0"+this.tags[item].name+"\n"
           for(var forpaths in this.paths){
 
             // 遍历get请求
 
             if(this.paths[forpaths].get){
               if(this.paths[forpaths].get.tags==this.tags[item].name ){
-                str+="\n"+"**接口地址："+forpaths+"**"+"\n\n"+"**请求方式：get**"+"\n\n"
+                str+="\n\n"+"### 接口地址："+forpaths+"\n\n"+"**HTTP请求方式：get**"+"\n\n"
                 if(this.paths[forpaths].get.summary){
-                  str+="**接口名称summary："+this.paths[forpaths].get.summary+"**"+"\n\n"
+                  str+="**接口功能："+this.paths[forpaths].get.summary+"**"+"\n\n"
                 }
                 if(this.paths[forpaths].get.parameters){
-                  str+="**请求参数说明：**"+"\n\n"+"| 参数名称 | 类型 | 必填 | 参数说明|"+"\n"+"|--------| --------| --------| --------|"+"\n"
+                  str+="**请求参数：**"+"\n\n"+"| 参数名称 | 类型 | 必填 | 参数说明|"+"\n"+"|--------| --------| --------| --------|"+"\n"
                   for(var part in this.paths[forpaths].get.parameters){
                   
                     if(this.paths[forpaths].get.parameters[part].name){str+="|"+this.paths[forpaths].get.parameters[part].name+"|"}
@@ -209,7 +215,7 @@ export default {
                               // console.log(this.paths[forpaths].get.responses[res].content[cont].schema.items.$ref)
                               for(var sch1 in this.schemas){
                                 if(this.paths[forpaths].get.responses[res].content[cont].schema.items.$ref.includes(sch1)){
-                                  str+="\n"+"**返回参数说明：**"+"\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                                  str+="\n"+"**返回字段：**"+"\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
                                   for(var pro1 in this.schemas[sch1].properties){
                                        str+="|"+pro1+"|"
                                      if(this.schemas[sch1].properties[pro1].type){
@@ -278,7 +284,7 @@ export default {
                       if(this.paths[forpaths].get.responses[res].content[cont].schema.$ref){
                         for(var sch in this.schemas){
                           if(this.paths[forpaths].get.responses[res].content[cont].schema.$ref.includes(sch)){
-                             str+="\n"+"**返回参数说明：**"+"\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                             str+="\n"+"**返回字段：**"+"\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
                             for(var pro in this.schemas[sch].properties){
                               // if(!this.schemas[sch].properties[pro].$ref){
                                 str+="|"+pro+"|"
@@ -352,15 +358,15 @@ export default {
 
             if(this.paths[forpaths].post){
               if(this.paths[forpaths].post.tags==this.tags[item].name ){
-                str+="\n\n"+"**接口地址："+forpaths+"**"+"\n\n"+"**请求方式：post**"+"\n\n"
+                str+="\n\n"+"**接口地址："+forpaths+"**"+"\n\n"+"**HTTP请求方式：post**"+"\n\n"
                 if(this.paths[forpaths].post.summary){
-                  str+="**接口名称summary："+this.paths[forpaths].post.summary+"**"+"\n\n"
+                  str+="**接口功能："+this.paths[forpaths].post.summary+"**"+"\n\n"
                 }
                 if(this.paths[forpaths].post.requestBody){
                   if(this.paths[forpaths].post.requestBody.description){
                     str+="description"+this.paths[forpaths].post.requestBody.description+"\n\n"
                   }
-                  str+="**请求参数说明：**"+"\n\n"+ " | 参数名称 | 类型 | 必填 | 参数说明|"+"\n"+"|--------| --------| --------| --------|"+"\n"
+                  str+="**请求参数：**"+"\n\n"+ " | 参数名称 | 类型 | 必填 | 参数说明|"+"\n"+"|--------| --------| --------| --------|"+"\n"
                   
                   for(var rebody in this.paths[forpaths].post.requestBody.content){
                     if(rebody=="text/json"){
@@ -491,7 +497,7 @@ export default {
                              if(this.paths[forpaths].post.responses[resp].content[contp].schema.items.$ref){
                                for(var schp1 in this.schemas){
                                 if(this.paths[forpaths].post.responses[resp].content[contp].schema.items.$ref.includes(schp1)){
-                                  str+="\n\n"+"返回参数说明："+"\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                                  str+="\n\n"+"返回字段："+"\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
                                   for(var prop1 in this.schemas[schp1].properties){
                                     // if(!this.schemas[schp1].properties[prop1].$ref){
                                        str+="|"+prop1+"|"
@@ -585,7 +591,7 @@ export default {
                             if(this.paths[forpaths].post.responses[resp].content[contp].schema.$ref){
                         for(var schp in this.schemas){
                           if(this.paths[forpaths].post.responses[resp].content[contp].schema.$ref.includes(schp)){
-                             str+="\n\n"+"返回参数说明："+"\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                             str+="\n\n"+"返回字段："+"\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
                             for(var prop in this.schemas[schp].properties){
                               // if(!this.schemas[schp].properties[prop].$ref){
                                 str+="|"+prop+"|"
@@ -695,15 +701,15 @@ export default {
 
             if(this.paths[forpaths].put){
                if(this.paths[forpaths].put.tags==this.tags[item].name ){
-                 str+="\n"+"**接口地址："+forpaths+"**"+"\n\n"+"**请求方式：put**"+"\n\n"
+                 str+="\n\n"+"**接口地址："+forpaths+"**"+"\n\n"+"**HTTP请求方式：put**"+"\n\n"
                  if(this.paths[forpaths].put.summary){
-                  str+="**接口名称summary："+this.paths[forpaths].put.summary+"**"+"\n\n"
+                  str+="**接口功能："+this.paths[forpaths].put.summary+"**"+"\n\n"
                  }
                  if(this.paths[forpaths].put.requestBody){
                     if(this.paths[forpaths].put.requestBody.description){
                       str+="description："+this.paths[forpaths].put.requestBody.description+"\n\n"
                     }
-                     str+="**请求参数说明：**"+"\n\n"+ " | 参数名称 | 类型 | 必填 | 参数说明|"+"\n"+"|--------| --------| --------| --------|"+"\n"
+                     str+="**请求参数：**"+"\n\n"+ " | 参数名称 | 类型 | 必填 | 参数说明|"+"\n"+"|--------| --------| --------| --------|"+"\n"
                      for(var rebodyput in this.paths[forpaths].put.requestBody.content){
                        if(rebodyput=="text/json"){
                          if(this.paths[forpaths].put.requestBody.content[rebodyput].schema.$ref){
@@ -824,7 +830,7 @@ export default {
                              if(this.paths[forpaths].put.responses[resput].content[contput].schema.items.$ref){
                                for(var schput1 in this.schemas){
                                  if(this.paths[forpaths].put.responses[resput].content[contput].schema.items.$ref.includes(schput1)){
-                                   str+="\n"+"**返回参数说明：**"+"\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                                   str+="\n"+"**返回字段：**"+"\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
                                    for(var proput1 in this.schemas[schput1].properties){
                                     //  if(!this.schemas[schput1].properties[proput1].$ref){
                                        str+="|"+proput1+"|"
@@ -943,7 +949,7 @@ export default {
                            if(this.paths[forpaths].post.responses[resput].content[contput].schema.$ref){
                             for(var schput in this.schemas){
                               if(this.paths[forpaths].put.responses[resput].content[contput].schema.$ref.includes(schput)){
-                                str+="\n"+"返回参数说明："+"\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                                str+="\n"+"返回字段："+"\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
                                 for(var proput in this.schemas[schput].properties){
                                   // if(!this.schemas[schput].properties[proput].$ref){
                                     str+="|"+proput+"|"
@@ -1065,12 +1071,12 @@ export default {
 
             if(this.paths[forpaths].delete){
               if(this.paths[forpaths].delete.tags==this.tags[item].name ){
-                 str+="\n\n"+"**接口地址："+forpaths+"**"+"\n\n"+"**请求方式：delete**"+"\n\n"
+                 str+="\n\n"+"**接口地址："+forpaths+"**"+"\n\n"+"**HTTP请求方式：delete**"+"\n\n"
                  if(this.paths[forpaths].delete.summary){
-                   str+="**接口名称summary："+this.paths[forpaths].delete.summary+"**"+"\n"
+                   str+="**接口功能："+this.paths[forpaths].delete.summary+"**"+"\n"
                  }
                   if(this.paths[forpaths].delete.parameters){
-                    str+="\n请求参数说明："+"\n\n"+"| 参数名称 | 类型 | 必填 | 参数说明|"+"\n"+"|--------| --------| --------| --------|"+"\n"
+                    str+="\n请求参数："+"\n\n"+"| 参数名称 | 类型 | 必填 | 参数说明|"+"\n"+"|--------| --------| --------| --------|"+"\n"
                     for(var partdel in this.paths[forpaths].delete.parameters){
                       if(this.paths[forpaths].delete.parameters[partdel].name){str+="|"+this.paths[forpaths].delete.parameters[partdel].name+"|"}
                       if(this.paths[forpaths].delete.parameters[partdel].schema.type){str+=this.paths[forpaths].delete.parameters[partdel].schema.type+"|"}
@@ -1125,7 +1131,7 @@ export default {
                               if(this.paths[forpaths].delete.responses[resdel].content[contdel].schema.items.$ref){
                                 for(var sch1del in this.schemas){
                                   if(this.paths[forpaths].delete.responses[resdel].content[contdel].schema.items.$ref.includes(sch1del)){
-                                    str+="\n"+"返回参数说明："+"\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n\n"+"|--------| --------| --------|"+"\n"
+                                    str+="\n"+"返回字段："+"\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n\n"+"|--------| --------| --------|"+"\n"
                                     for(var pro1del in this.schemas[sch1del].properties){
                                       //  if(!this.schemas[sch1del].properties[pro1del].$ref){
                                          str+="|"+pro1del+"|"
@@ -1192,7 +1198,7 @@ export default {
                              if(this.paths[forpaths].delete.responses[resdel].content[contdel].schema.$ref){
                                for(var schdel in this.schemas){
                                  if(this.paths[forpaths].delete.responses[resdel].content[contdel].schema.$ref.includes(schdel)){
-                                    str+="\n"+"返回参数说明："+"\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n\n"+"|--------| --------| --------|"+"\n"
+                                    str+="\n"+"返回字段："+"\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n\n"+"|--------| --------| --------|"+"\n"
                                     for(var prodel in this.schemas[schdel].properties){
                                       // if(!this.schemas[schdel].properties[prodel].$ref){
                                         str+="|"+prodel+"|"
