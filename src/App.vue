@@ -5,7 +5,7 @@
   
   <a class="iconfont-check"></a>
 
-  <div style="width: 40%;height: 850px;float:left;display: inline-block;margin-left:10px">
+  <div style="width: 40%;height: 850px;float:left;display: inline-block;margin-left:10px;">
     <div>输入swagger.json的接口地址：
     <input v-model="axiosurl"><a-button size="small" type="primary" @click="handclick()" icon="file-add">anxios</a-button>
     </div>
@@ -114,12 +114,12 @@ export default {
 
             if(this.paths[forpaths].get){
               if(this.paths[forpaths].get.tags==this.tags[item].name ){
-                str+="\n\n"+"### 接口地址："+forpaths+"\n\n"+"**HTTP请求方式：get**"+"\n\n"
+                str+="\n\n"+"### 接口地址："+forpaths+"\n\n"+"* **请求方式：get**"+"\n\n"
                 if(this.paths[forpaths].get.summary){
-                  str+="**接口功能："+this.paths[forpaths].get.summary+"**"+"\n\n"
+                  str+="* **接口功能："+this.paths[forpaths].get.summary+"**"+"\n\n"
                 }
                 if(this.paths[forpaths].get.parameters){
-                  str+="**请求参数：**"+"\n\n"+"| 参数名称 | 类型 | 必填 | 参数说明|"+"\n"+"|--------| --------| --------| --------|"+"\n"
+                  str+="* **请求参数说明：**"+"\n\n"+"| 参数名称 | 类型 | 必填 | 参数说明|"+"\n"+"|--------| --------| --------| --------|"+"\n"
                   for(var part in this.paths[forpaths].get.parameters){
                   
                     if(this.paths[forpaths].get.parameters[part].name){str+="|"+this.paths[forpaths].get.parameters[part].name+"|"}
@@ -138,10 +138,10 @@ export default {
                       // console.log("1234")
                       for(var askschget in this.schemas){
                         if(this.paths[forpaths].get.parameters[askrefget].schema.$ref.includes(askschget)){
-                          str+="\n"+"对象"+this.paths[forpaths].get.parameters[askrefget].name+"："
+                          str+="\n"+"* 对象"+this.paths[forpaths].get.parameters[askrefget].name+"："
                           if(this.schemas[askschget].properties){
                             // console.log(this.schemas[askschget].description)
-                            str+=this.schemas[askschget].description+"\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                            str+=this.schemas[askschget].description+"\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
                             for(var pro1ask in this.schemas[askschget].properties){
                               //  if(!this.schemas[askschget].properties[pro1ask].$ref){
                                  str+="|"+pro1ask+"|"
@@ -164,7 +164,7 @@ export default {
                             }
                           }
                           else{
-                            str+=this.schemas[askschget].description+"\n\n"+"类型："+this.schemas[askschget].type+"\n"
+                            str+=this.schemas[askschget].description+"\n\n"+"\xa0\xa0\xa0\xa0* 类型："+this.schemas[askschget].type+"\n"
 
                           }
                         }
@@ -175,9 +175,9 @@ export default {
                       if(this.paths[forpaths].get.parameters[askrefget].schema.items.$ref){
                       for(var askschget1 in this.schemas){
                         if(this.paths[forpaths].get.parameters[askrefget].schema.items.$ref.includes(askschget1)){
-                          str+="\n"+"数组"+this.paths[forpaths].get.parameters[askrefget].name+"："
+                          str+="\n"+"* 数组"+this.paths[forpaths].get.parameters[askrefget].name+"："
                           if(this.schemas[askschget1].properties){
-                            str+=this.schemas[askschget1].description+"\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                            str+=this.schemas[askschget1].description+"\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
                             for(var pro1ask1 in this.schemas[askschget].properties){
                               str+="|"+pro1ask1+"|"
                                if(this.schemas[askschget].properties[pro1ask1].type){
@@ -197,7 +197,7 @@ export default {
                             }
                           }
                           else{
-                            str+=this.schemas[askschget1].description+"\n\n"+"类型："+this.schemas[askschget1].type+"\n"
+                            str+=this.schemas[askschget1].description+"\n\n"+"\xa0\xa0\xa0\xa0* 类型："+this.schemas[askschget1].type+"\n"
                           }
                         }
                       }
@@ -215,7 +215,7 @@ export default {
                               // console.log(this.paths[forpaths].get.responses[res].content[cont].schema.items.$ref)
                               for(var sch1 in this.schemas){
                                 if(this.paths[forpaths].get.responses[res].content[cont].schema.items.$ref.includes(sch1)){
-                                  str+="\n"+"**返回字段：**"+"\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                                  str+="\n"+"* **返回参数说明：**"+"\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
                                   for(var pro1 in this.schemas[sch1].properties){
                                        str+="|"+pro1+"|"
                                      if(this.schemas[sch1].properties[pro1].type){
@@ -240,9 +240,9 @@ export default {
                                   if(this.schemas[sch1].properties[pro1get].$ref){
                                     for(var rtschget in this.schemas){
                                       if(this.schemas[sch1].properties[pro1get].$ref.includes(rtschget)){
-                                        str+="\n"+"返回对象"+pro1+"："
+                                        str+="\n"+"* 返回对象"+pro1+"："
                                         if(this.schemas[rtschget].properties){
-                                          str+=this.schemas[rtschget].description+"\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                                          str+=this.schemas[rtschget].description+"\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
                                           for(var pro1rt in this.schemas[rtschget].properties){
                                             str+="|"+pro1rt+"|"
                                             if(this.schemas[rtschget].properties[pro1rt].type){
@@ -267,7 +267,7 @@ export default {
                                           // console.log(this.schemas[rtschget].description)
                                           str+=this.schemas[rtschget].description+"\n\n"
                                           if(this.schemas[rtschget].type){
-                                            str+="类型："+this.schemas[rtschget].type+"\n"
+                                            str+="\xa0\xa0\xa0\xa0* 类型："+this.schemas[rtschget].type+"\n"
                                           }
                                         }
                                       }
@@ -284,7 +284,7 @@ export default {
                       if(this.paths[forpaths].get.responses[res].content[cont].schema.$ref){
                         for(var sch in this.schemas){
                           if(this.paths[forpaths].get.responses[res].content[cont].schema.$ref.includes(sch)){
-                             str+="\n"+"**返回字段：**"+"\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                             str+="\n"+"* **返回参数说明：**"+"\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
                             for(var pro in this.schemas[sch].properties){
                               // if(!this.schemas[sch].properties[pro].$ref){
                                 str+="|"+pro+"|"
@@ -305,9 +305,9 @@ export default {
                                if(this.schemas[sch].properties[pro1get1].$ref){
                                  for(var rtschget1 in this.schemas){
                                    if(this.schemas[sch].properties[pro1get1].$ref.includes(rtschget1)){
-                                     str+="\n"+"返回对象"+pro+"："
+                                     str+="\n"+"* 返回对象"+pro+"："
                                      if(this.schemas[rtschget1].properties){
-                                       str+=this.schemas[rtschget1].description+"\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                                       str+=this.schemas[rtschget1].description+"\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
                                        for(var pro1rt1 in this.schemas[rtschget1].properties){
                                         str+="|"+pro1rt1+"|"
                                         if(this.schemas[rtschget1].properties[pro1rt1].type){
@@ -331,7 +331,7 @@ export default {
                                      else{
                                        str+=this.schemas[rtschget1].description+"\n\n"
                                        if(this.schemas[rtschget1].type){
-                                         str+="类型："+this.schemas[rtschget1].type+"\n"
+                                         str+="\xa0\xa0\xa0\xa0* 类型："+this.schemas[rtschget1].type+"\n"
                                        }
                                      }
                                    }
@@ -348,7 +348,7 @@ export default {
                     }
                   }
 
-                }
+                }str+="\n"+"-----"+"\n"
                 
 
               }
@@ -358,15 +358,15 @@ export default {
 
             if(this.paths[forpaths].post){
               if(this.paths[forpaths].post.tags==this.tags[item].name ){
-                str+="\n\n"+"**接口地址："+forpaths+"**"+"\n\n"+"**HTTP请求方式：post**"+"\n\n"
+                str+="\n\n"+"**接口地址："+forpaths+"**"+"\n\n"+"* **请求方式：post**"+"\n\n"
                 if(this.paths[forpaths].post.summary){
-                  str+="**接口功能："+this.paths[forpaths].post.summary+"**"+"\n\n"
+                  str+="* **接口功能："+this.paths[forpaths].post.summary+"**"+"\n\n"
                 }
                 if(this.paths[forpaths].post.requestBody){
                   if(this.paths[forpaths].post.requestBody.description){
                     str+="description"+this.paths[forpaths].post.requestBody.description+"\n\n"
                   }
-                  str+="**请求参数：**"+"\n\n"+ " | 参数名称 | 类型 | 必填 | 参数说明|"+"\n"+"|--------| --------| --------| --------|"+"\n"
+                  str+="* **请求参数说明：**"+"\n\n"+ " | 参数名称 | 类型 | 必填 | 参数说明|"+"\n"+"|--------| --------| --------| --------|"+"\n"
                   
                   for(var rebody in this.paths[forpaths].post.requestBody.content){
                     if(rebody=="text/json"){
@@ -411,9 +411,9 @@ export default {
                                     if(this.schemas[sch2].properties[pro2ask].$ref){
                                       for(var askschpost in this.schemas){
                                         if(this.schemas[sch2].properties[pro2ask].$ref.includes(askschpost)){
-                                          str+="\n"+"数组"+pro2ask+"："
+                                          str+="\n"+"* 数组"+pro2ask+"："
                                           if(this.schemas[askschpost].properties){
-                                            str+="\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                                            str+="\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
                                             for(var askpropost in this.schemas[askschpost].properties){
                                               str+="|"+askpropost+"|"
                                               if(this.schemas[askschpost].properties[askpropost].type){
@@ -435,7 +435,7 @@ export default {
                                           else{
                                             str+=this.schemas[askschpost].description+"\n\n"
                                             if(this.schemas[askschpost].type){
-                                              str+="类型："+this.schemas[askschpost].type+"\n"
+                                              str+="\xa0\xa0\xa0\xa0* 类型："+this.schemas[askschpost].type+"\n"
                                             }
                                           }
                                         }
@@ -447,9 +447,9 @@ export default {
                                     if(this.schemas[sch2].properties[pro2ask1].$ref){
                                       for(var askschpost1 in this.schemas){
                                         if(this.schemas[sch2].properties[pro2ask1].$ref.includes(askschpost1)){
-                                          str+="\n"+"对象"+pro2ask1+"："
+                                          str+="\n"+"* 对象"+pro2ask1+"："
                                           if(this.schemas[askschpost1].properties){
-                                            str+="\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                                            str+="\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
                                             for(var askpropost1 in this.schemas[askschpost1].properties){
                                               str+="|"+askpropost1+"|"
                                               if(this.schemas[askschpost1].properties[askpropost1].type){
@@ -472,7 +472,7 @@ export default {
                                           else{
                                             str+=this.schemas[askschpost1].description+"\n\n"
                                             if(this.schemas[askschpost1].type){
-                                              str+="类型："+this.schemas[askschpost1].type+"\n"
+                                              str+="\xa0\xa0\xa0\xa0* 类型："+this.schemas[askschpost1].type+"\n"
                                             }
                                           }
                                         }
@@ -497,7 +497,7 @@ export default {
                              if(this.paths[forpaths].post.responses[resp].content[contp].schema.items.$ref){
                                for(var schp1 in this.schemas){
                                 if(this.paths[forpaths].post.responses[resp].content[contp].schema.items.$ref.includes(schp1)){
-                                  str+="\n\n"+"返回字段："+"\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                                  str+="\n\n"+"* **返回参数说明：**"+"\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
                                   for(var prop1 in this.schemas[schp1].properties){
                                     // if(!this.schemas[schp1].properties[prop1].$ref){
                                        str+="|"+prop1+"|"
@@ -516,9 +516,9 @@ export default {
                                     if(this.schemas[schp1].properties[pro1post].$ref){
                                       for(var rtschpost in this.schemas){
                                         if(this.schemas[schp1].properties[pro1post].$ref.includes(rtschpost)){
-                                          str+="\n"+"返回对象"+pro1post+"："
+                                          str+="\n"+"* 返回对象"+pro1post+"："
                                           if(this.schemas[rtschpost].properties){
-                                            str+="\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                                            str+="\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
                                             for(var postrt in this.schemas[rtschpost].properties){
                                               str+="|"+postrt+"|"
                                               if(this.schemas[rtschpost].properties[postrt].type){
@@ -552,9 +552,9 @@ export default {
                                     if(this.schemas[schp1].properties[pro1post1].items.$ref){
                                       for(var rtschpost1 in this.schemas){
                                         if(this.schemas[schp1].properties[pro1post1].items.$ref.includes(rtschpost1)){
-                                          str+="\n"+"返回数组"+pro1post1+"："
+                                          str+="\n"+"* 返回数组"+pro1post1+"："
                                           if(this.schemas[rtschpost1].properties){
-                                            str+="\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                                            str+="\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
                                             for(var postrt1 in this.schemas[rtschpost1].properties){
                                               str+="|"+postrt1+"|"
                                               if(this.schemas[rtschpost1].properties[postrt1].type){
@@ -591,7 +591,7 @@ export default {
                             if(this.paths[forpaths].post.responses[resp].content[contp].schema.$ref){
                         for(var schp in this.schemas){
                           if(this.paths[forpaths].post.responses[resp].content[contp].schema.$ref.includes(schp)){
-                             str+="\n\n"+"返回字段："+"\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                             str+="\n\n"+"* **返回参数说明：**"+"\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
                             for(var prop in this.schemas[schp].properties){
                               // if(!this.schemas[schp].properties[prop].$ref){
                                 str+="|"+prop+"|"
@@ -611,9 +611,9 @@ export default {
                                     if(this.schemas[schp1].properties[pro1post2].$ref){
                                       for(var rtschpost2 in this.schemas){
                                         if(this.schemas[schp1].properties[pro1post2].$ref.includes(rtschpost2)){
-                                          str+="\n"+"返回对象"+pro1post2+"："
+                                          str+="\n"+"* 返回对象"+pro1post2+"："
                                           if(this.schemas[rtschpost2].properties){
-                                            str+="\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                                            str+="\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
                                             for(var postrt2 in this.schemas[rtschpost2].properties){
                                               str+="|"+postrt2+"|"
                                               if(this.schemas[rtschpost2].properties[postrt2].type){
@@ -647,9 +647,9 @@ export default {
                                     if(this.schemas[schp1].properties[pro1post3].$ref){
                                       for(var rtschpost3 in this.schemas){
                                         if(this.schemas[schp1].properties[pro1post3].$ref.includes(rtschpost3)){
-                                          str+="\n"+"返回对象"+pro1post3+"："
+                                          str+="\n"+"* 返回对象"+pro1post3+"："
                                           if(this.schemas[rtschpost3].properties){
-                                            str+="\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                                            str+="\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
                                             for(var postrt3 in this.schemas[rtschpost3].properties){
                                               str+="|"+postrt3+"|"
                                               if(this.schemas[rtschpost3].properties[postrt3].type){
@@ -691,7 +691,7 @@ export default {
                        }
                      }
                    }
-                }
+                }str+="\n"+"-----"+"\n"
 
 
               }
@@ -701,15 +701,15 @@ export default {
 
             if(this.paths[forpaths].put){
                if(this.paths[forpaths].put.tags==this.tags[item].name ){
-                 str+="\n\n"+"**接口地址："+forpaths+"**"+"\n\n"+"**HTTP请求方式：put**"+"\n\n"
+                 str+="\n\n"+"**接口地址："+forpaths+"**"+"\n\n"+"* **请求方式：put**"+"\n\n"
                  if(this.paths[forpaths].put.summary){
-                  str+="**接口功能："+this.paths[forpaths].put.summary+"**"+"\n\n"
+                  str+="* **接口功能："+this.paths[forpaths].put.summary+"**"+"\n\n"
                  }
                  if(this.paths[forpaths].put.requestBody){
                     if(this.paths[forpaths].put.requestBody.description){
                       str+="description："+this.paths[forpaths].put.requestBody.description+"\n\n"
                     }
-                     str+="**请求参数：**"+"\n\n"+ " | 参数名称 | 类型 | 必填 | 参数说明|"+"\n"+"|--------| --------| --------| --------|"+"\n"
+                     str+="* **请求参数说明：**"+"\n\n"+ " | 参数名称 | 类型 | 必填 | 参数说明|"+"\n"+"|--------| --------| --------| --------|"+"\n"
                      for(var rebodyput in this.paths[forpaths].put.requestBody.content){
                        if(rebodyput=="text/json"){
                          if(this.paths[forpaths].put.requestBody.content[rebodyput].schema.$ref){
@@ -747,9 +747,9 @@ export default {
                                    if(this.schemas[sch2put].properties[pro2put].$ref){
                                      for(var askschput in this.schemas){
                                        if(this.schemas[sch2put].properties[pro2put].$ref.includes(askschput)){
-                                         str+="\n"+"对象"+pro2put+"："
+                                         str+="\n"+"* 对象"+pro2put+"："
                                          if(this.schemas[sch2put].properties){
-                                           str+="\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                                           str+="\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
                                             for(var putproask in this.schemas[askschget].properties){
                                               str+="|"+putproask+"|"
                                               if(this.schemas[askschget].properties[putproask].type){
@@ -771,7 +771,7 @@ export default {
 
                                          }
                                          else{
-                                           str+=this.schemas[askschget].description+"\n\n"+"类型："+this.schemas[askschget].type+"\n"
+                                           str+=this.schemas[askschget].description+"\n\n"+"\xa0\xa0\xa0\xa0* 类型："+this.schemas[askschget].type+"\n"
                                          }
                                        }
                                      }
@@ -780,9 +780,9 @@ export default {
                                      if(this.schemas[sch2put].properties[pro2put].items.$ref){
                                        for(var askschput1 in this.schemas){
                                        if(this.schemas[sch2put].properties[pro2put].items.$ref.includes(askschput1)){
-                                         str+="\n"+"数组"+pro2put+"："
+                                         str+="\n"+"* 数组"+pro2put+"："
                                          if(this.schemas[sch2put].properties){
-                                           str+="\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                                           str+="\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
                                             for(var putproask1 in this.schemas[askschget].properties){
                                               str+="|"+putproask1+"|"
                                               if(this.schemas[askschget].properties[putproask1].type){
@@ -804,7 +804,7 @@ export default {
 
                                          }
                                          else{
-                                           str+=this.schemas[askschget].description+"\n\n"+"类型："+this.schemas[askschget].type+"\n"
+                                           str+=this.schemas[askschget].description+"\n\n"+"\xa0\xa0\xa0\xa0* 类型："+this.schemas[askschget].type+"\n"
                                          }
                                        }
                                      }
@@ -830,7 +830,7 @@ export default {
                              if(this.paths[forpaths].put.responses[resput].content[contput].schema.items.$ref){
                                for(var schput1 in this.schemas){
                                  if(this.paths[forpaths].put.responses[resput].content[contput].schema.items.$ref.includes(schput1)){
-                                   str+="\n"+"**返回字段：**"+"\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                                   str+="\n"+"* **返回参数说明：**"+"\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
                                    for(var proput1 in this.schemas[schput1].properties){
                                     //  if(!this.schemas[schput1].properties[proput1].$ref){
                                        str+="|"+proput1+"|"
@@ -858,13 +858,13 @@ export default {
                                   if(this.schemas[schput].properties[pro1put].$ref){
                                     for(var rtschput in this.schemas){
                                       if(this.schemas[schput].properties[pro1put].$ref.includes(rtschput)){
-                                        str+="\n"+"返回对象"+proput+"："
+                                        str+="\n"+"* 返回对象"+proput+"："
                                         
                                         if(this.schemas[rtschput].properties){
                                         //   if(this.schemas[rtschput].description){
                                         //   str+=this.schemas[rtschput].description
                                         // }
-                                          str+="\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                                          str+="\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
                                           for(var putrt in this.schemas[rtschput].properties){
                                             str+="|"+putrt+"|"
                                             if(this.schemas[rtschput].properties[putrt].type){
@@ -902,12 +902,12 @@ export default {
                                     if(this.schemas[schput].properties[pro1put2].items.$ref){
                                     for(var rtschput2 in this.schemas){
                                       if(this.schemas[schput].properties[pro1put2].items.$ref.includes(rtschput2)){
-                                        str+="\n"+"返回数组"+proput+"："
+                                        str+="\n"+"* 返回数组"+proput+"："
                                         if(this.schemas[rtschput2].properties){
                                         //   if(this.schemas[rtschput2].description){
                                         //   str+=this.schemas[rtschput2].description
                                         // }
-                                          str+="\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                                          str+="\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
                                           for(var putrt2 in this.schemas[rtschput2].properties){
                                             str+="|"+putrt2+"|"
                                             if(this.schemas[rtschput2].properties[putrt2].type){
@@ -949,7 +949,7 @@ export default {
                            if(this.paths[forpaths].post.responses[resput].content[contput].schema.$ref){
                             for(var schput in this.schemas){
                               if(this.paths[forpaths].put.responses[resput].content[contput].schema.$ref.includes(schput)){
-                                str+="\n"+"返回字段："+"\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                                str+="\n"+"* **返回参数说明：**"+"\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
                                 for(var proput in this.schemas[schput].properties){
                                   // if(!this.schemas[schput].properties[proput].$ref){
                                     str+="|"+proput+"|"
@@ -971,12 +971,12 @@ export default {
                                   if(this.schemas[schput].properties[pro1put1].$ref){
                                     for(var rtschput1 in this.schemas){
                                       if(this.schemas[schput].properties[pro1put1].$ref.includes(rtschput1)){
-                                        str+="\n"+"返回对象"+proput+"："
+                                        str+="\n"+"* 返回对象"+proput+"："
                                         if(this.schemas[rtschput1].properties){
                                         //   if(this.schemas[rtschput1].description){
                                         //   str+=this.schemas[rtschput1].description
                                         // }
-                                          str+="\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                                          str+="\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
                                           for(var putrt1 in this.schemas[rtschput1].properties){
                                             str+="|"+putrt1+"|"
                                             if(this.schemas[rtschput1].properties[putrt1].type){
@@ -1014,12 +1014,12 @@ export default {
                                     if(this.schemas[schput].properties[pro1put3].items.$ref){
                                     for(var rtschput3 in this.schemas){
                                       if(this.schemas[schput].properties[pro1put3].items.$ref.includes(rtschput3)){
-                                        str+="\n"+"返回数组"+proput+"："
+                                        str+="\n"+"* 返回数组"+proput+"："
                                         if(this.schemas[rtschput3].properties){
                                         //   if(this.schemas[rtschput3].description){
                                         //   str+=this.schemas[rtschput3].description
                                         // }
-                                          str+="\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
+                                          str+="\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n"+"|--------| --------| --------|"+"\n"
                                           for(var putrt3 in this.schemas[rtschput3].properties){
                                             str+="|"+putrt3+"|"
                                             if(this.schemas[rtschput3].properties[putrt3].type){
@@ -1062,7 +1062,7 @@ export default {
                        }
                      }
                    }
-                 }
+                 }str+="\n"+"-----"+"\n"
 
                }
             }
@@ -1071,12 +1071,12 @@ export default {
 
             if(this.paths[forpaths].delete){
               if(this.paths[forpaths].delete.tags==this.tags[item].name ){
-                 str+="\n\n"+"**接口地址："+forpaths+"**"+"\n\n"+"**HTTP请求方式：delete**"+"\n\n"
+                 str+="\n\n"+"**接口地址："+forpaths+"**"+"\n\n"+"* **请求方式：delete**"+"\n\n"
                  if(this.paths[forpaths].delete.summary){
-                   str+="**接口功能："+this.paths[forpaths].delete.summary+"**"+"\n"
+                   str+="* **接口功能："+this.paths[forpaths].delete.summary+"**"+"\n\n"
                  }
                   if(this.paths[forpaths].delete.parameters){
-                    str+="\n请求参数："+"\n\n"+"| 参数名称 | 类型 | 必填 | 参数说明|"+"\n"+"|--------| --------| --------| --------|"+"\n"
+                    str+="* **请求参数说明：**"+"\n\n"+"| 参数名称 | 类型 | 必填 | 参数说明|"+"\n"+"|--------| --------| --------| --------|"+"\n"
                     for(var partdel in this.paths[forpaths].delete.parameters){
                       if(this.paths[forpaths].delete.parameters[partdel].name){str+="|"+this.paths[forpaths].delete.parameters[partdel].name+"|"}
                       if(this.paths[forpaths].delete.parameters[partdel].schema.type){str+=this.paths[forpaths].delete.parameters[partdel].schema.type+"|"}
@@ -1092,12 +1092,12 @@ export default {
                       if(this.paths[forpaths].delete.parameters[askrefdel].schema.$ref){
                         for(var askschdel in this.schemas){
                           if(this.paths[forpaths].delete.parameters[askrefdel].schema.$ref.includes(askschdel)){
-                            str+="\n"+"对象："
+                            str+="\n"+"* 对象："
                             if(this.schemas[askschdel].properties){
                               console.log("111")
                             }
                             else{
-                              str+=this.schemas[askschdel].description+"\n\n"+"类型："+this.schemas[askschdel].type+"\n"
+                              str+=this.schemas[askschdel].description+"\n\n"+"* \xa0\xa0\xa0\xa0* 类型："+this.schemas[askschdel].type+"\n"
                             }
                           }
                         }
@@ -1109,12 +1109,12 @@ export default {
                       if(this.paths[forpaths].delete.parameters[askrefdel1].schema.items.$ref){
                         for(var askschdel1 in this.schemas){
                           if(this.paths[forpaths].delete.parameters[askrefdel1].schema.items.$ref.includes(askschdel1)){
-                            str+="\n"+"数组："
+                            str+="\n"+"* 数组："
                             if(this.schemas[askschdel1].properties){
                               console.log("111")
                             }
                             else{
-                              str+=this.schemas[askschdel1].description+"\n\n"+"类型："+this.schemas[askschdel1].type+"\n"
+                              str+=this.schemas[askschdel1].description+"\n\n"+"\xa0\xa0\xa0\xa0* 类型："+this.schemas[askschdel1].type+"\n"
                             }
                           }
                         }
@@ -1131,7 +1131,7 @@ export default {
                               if(this.paths[forpaths].delete.responses[resdel].content[contdel].schema.items.$ref){
                                 for(var sch1del in this.schemas){
                                   if(this.paths[forpaths].delete.responses[resdel].content[contdel].schema.items.$ref.includes(sch1del)){
-                                    str+="\n"+"返回字段："+"\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n\n"+"|--------| --------| --------|"+"\n"
+                                    str+="\n"+"* **返回参数说明：**"+"\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n\n"+"|--------| --------| --------|"+"\n"
                                     for(var pro1del in this.schemas[sch1del].properties){
                                       //  if(!this.schemas[sch1del].properties[pro1del].$ref){
                                          str+="|"+pro1del+"|"
@@ -1155,7 +1155,7 @@ export default {
                                       if(this.schemas[sch1del].properties[pro1delrt].$ref){
                                         for(var rtschdel in this.schemas){
                                           if(this.schemas[sch1del].properties[pro1delrt].$ref.includes(rtschdel)){
-                                            str+="\n"+"返回对象"+pro1delrt+"："
+                                            str+="\n"+"* 返回对象"+pro1delrt+"："
                                             if(this.schemas[rtschdel].properties){
                                               console.log("111113232")
                                             }
@@ -1174,7 +1174,7 @@ export default {
                                       if(this.schemas[sch1del].properties[pro1delrt1].items.$ref){
                                         for(var rtschdel1 in this.schemas){
                                           if(this.schemas[sch1del].properties[pro1delrt1].items.$ref.includes(rtschdel1)){
-                                            str+="\n"+"返回数组"+pro1delrt1+"："
+                                            str+="\n"+"* 返回数组"+pro1delrt1+"："
                                             if(this.schemas[rtschdel1].properties){
                                               console.log("111113232")
                                             }
@@ -1198,7 +1198,7 @@ export default {
                              if(this.paths[forpaths].delete.responses[resdel].content[contdel].schema.$ref){
                                for(var schdel in this.schemas){
                                  if(this.paths[forpaths].delete.responses[resdel].content[contdel].schema.$ref.includes(schdel)){
-                                    str+="\n"+"返回字段："+"\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n\n"+"|--------| --------| --------|"+"\n"
+                                    str+="\n"+"* **返回参数说明：**"+"\n\n"+"| 参数名称 | 类型 | 参数说明|"+"\n\n"+"|--------| --------| --------|"+"\n"
                                     for(var prodel in this.schemas[schdel].properties){
                                       // if(!this.schemas[schdel].properties[prodel].$ref){
                                         str+="|"+prodel+"|"
@@ -1224,7 +1224,7 @@ export default {
                                       if(this.schemas[sch1del].properties[pro1delrt2].$ref){
                                         for(var rtschdel2 in this.schemas){
                                           if(this.schemas[sch1del].properties[pro1delrt2].$ref.includes(rtschdel2)){
-                                            str+="\n"+"返回对象"+pro1delrt2+"："
+                                            str+="\n"+"* 返回对象"+pro1delrt2+"："
                                             if(this.schemas[rtschdel2].properties){
                                               console.log("111113232")
                                             }
@@ -1243,7 +1243,7 @@ export default {
                                       if(this.schemas[sch1del].properties[pro1delrt3].$ref){
                                         for(var rtschdel3 in this.schemas){
                                           if(this.schemas[sch1del].properties[pro1delrt3].$ref.includes(rtschdel3)){
-                                            str+="\n"+"返回数组"+pro1delrt3+"："
+                                            str+="\n"+"* 返回数组"+pro1delrt3+"："
                                             if(this.schemas[rtschdel3].properties){
                                               console.log("111113232")
                                             }
@@ -1267,24 +1267,17 @@ export default {
                         }
                       }
                     }
-                  }
+                  }str+="\n"+"-----"+"\n"
               }
             }
           }
         }
-        // console.log(str)
+        console.log(str)
         // this.html = require('marked')(str)
-        
         this.content=str
         return str;
-
-
       }
-     
-      
     },
- 
-    
 }
 </script>
 <style>
