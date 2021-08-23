@@ -2,11 +2,14 @@ import Vue from 'vue'
 import App from './App.vue'
 import axios from 'axios'
 import 'github-markdown-css'
-import Button from 'ant-design-vue/lib/button';
-import 'ant-design-vue/dist/antd.css';
+// import 'ant-design-vue/dist/antd.css';
+// import Antd from 'ant-design-vue';
+// Vue.use(Antd);
+import { Input,Icon,Affix,Empty } from 'ant-design-vue'
+Vue.use(Input).use(Icon).use(Affix).use(Empty)
 Vue.prototype.$axios = axios
 Vue.config.productionTip = false
-Vue.component(Button.name, Button);
+
 axios.defaults.baseURL = '/api'
 new Vue({
   render: h => h(App),

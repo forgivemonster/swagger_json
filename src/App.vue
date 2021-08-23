@@ -1,28 +1,42 @@
 <template>
 <div>
 
-<div >
-  
-  <a class="iconfont-check"></a>
-
-  <div style="width: 40%;height: 850px;float:left;display: inline-block;margin-left:10px;">
-    <div>输入swagger.json的接口地址：
-    <input v-model="axiosurl"><a-button size="small" type="primary" @click="handclick()" icon="file-add">anxios</a-button>
+<div>
+  <div style="width: 40%;height:100%;float:left;display: inline-block;margin-left:10px;">
+    <div>
+    <div style="width: 80%;float:left">
+      <!-- <a-input placeholder="输入swagger.json的接口地址" />
+    <a-button size="small" type="primary" @click="handclick()" icon="file-add">anxios</a-button> -->
+    
+     <a-input-search
+      placeholder="输入swagger.json的接口地址"
+      enter-button="请求JSON"
+      size="large"
+      v-model="axiosurl"
+      @search="handclick()"
+    />
     </div>
+    <div style="width:20%;float:left;margin-left:20px auto;margin-right:20px auto">
     <div >
-    <div style="float:left;width: 70%;">
-或者在下面输入需要转换的JSON文件：
+      &nbsp;&nbsp;&nbsp;&nbsp;<a-button @click="show" type="primary" size="large" icon="swap">点击转换</a-button></div>
     </div>
-    <div style="float:left"><a-button @click="show" type="primary" size="small" icon="swap">点击转换</a-button></div>
     </div>
-  <textarea v-model="text" style="height: 850px;width: 90%;"></textarea>
+     <br><br>
+    <div style="height: 850px;width: 80%;">
+     
+  <a-textarea placeholder="输入需要转换的JSON" :rows="42" v-model="text"/>
+    </div>
   </div>
 
    <div style="width: 59%;float:left;display: inline-block;height: 850px;">
-     <a-button  type="danger" icon="download"  @click="download('swagger.md',content)" size="large"  >导出</a-button>
+     <a-affix :offset-bottom="top">
+     <a-button  type="danger" icon="download"  @click="download('swagger.md',content)" size="large">导出</a-button>
+      </a-affix>
+      <a-empty v-show="1"/>
     <markdown-it-vue class="md-body" :content="content"/>
   </div>
 </div>
+
 </div>
 
 </template>
@@ -55,8 +69,9 @@ export default {
       Data:[],
       content: '',
       axiosurl:'',
-      aaa:'swagger/project_api/swagger.json',
-      bbb:'https://api.ee.spdqd.test.spdio.com/'
+      top:0
+      // aaa:'swagger/project_api/swagger.json',
+      // bbb:'https://api.ee.spdqd.test.spdio.com/'
     }
   },
     methods:{
@@ -70,7 +85,6 @@ export default {
       //   this.paths=this.Data.paths
       //   this.schemas=this.Data.components.schemas
       //   // console.log(this.paths)
-
       // },
       download(filename,filecontent){
         let content = new Blob([filecontent])
@@ -707,7 +721,7 @@ export default {
                  }
                  if(this.paths[forpaths].put.requestBody){
                     if(this.paths[forpaths].put.requestBody.description){
-                      str+="description："+this.paths[forpaths].put.requestBody.description+"\n\n"
+                      str+="* **接口描述："+this.paths[forpaths].put.requestBody.description+"** \n\n"
                     }
                      str+="* **请求参数说明：**"+"\n\n"+ " | 参数名称 | 类型 | 必填 | 参数说明|"+"\n"+"|--------| --------| --------| --------|"+"\n"
                      for(var rebodyput in this.paths[forpaths].put.requestBody.content){
