@@ -5,8 +5,8 @@ import 'github-markdown-css'
 // import 'ant-design-vue/dist/antd.css';
 // import Antd from 'ant-design-vue';
 // Vue.use(Antd);
-import { Input,Icon,Affix,Empty } from 'ant-design-vue'
-Vue.use(Input).use(Icon).use(Affix).use(Empty)
+import { Input,Icon,Affix,Empty,Space } from 'ant-design-vue'
+Vue.use(Input).use(Icon).use(Affix).use(Empty).use(Space)
 Vue.prototype.$axios = axios
 Vue.config.productionTip = false
 

@@ -29,14 +29,22 @@
   </div>
 
    <div style="width: 59%;float:left;display: inline-block;height: 850px;">
-     <a-affix :offset-bottom="top">
+     <a-space>
      <a-button  type="danger" icon="download"  @click="download('swagger.md',content)" size="large">导出</a-button>
-      </a-affix>
-      <a-empty v-show="1"/>
+     <a-button  type="danger" icon="sync"  @click="clear()" size="large">清空</a-button>
+      </a-space>
+      <a-empty v-show="content==''"/>
     <markdown-it-vue class="md-body" :content="content"/>
   </div>
 </div>
-
+<el-tooltip placement="top" content="返回顶部">
+      <back-to-top 
+        transitionName="fade"
+        :customStyle="myBackToTopStyle" 
+        :visibilityHeight="300" 
+        :backPosition="50">
+      </back-to-top>
+    </el-tooltip>
 </div>
 
 </template>
@@ -47,20 +55,20 @@ import marked from 'marked'
 import {Button} from 'ant-design-vue'
 import MarkdownItVue from 'markdown-it-vue'
 import 'markdown-it-vue/dist/markdown-it-vue.css'
+import BackToTop from './BackToTop.vue'
 
-// import bianli from './components/bianli.vue'
 Vue.component("axios",axios);
 Vue.use(Button);
 
 export default {
   components: {
+    BackToTop,
     MarkdownItVue
   },
   // components: { bianli },
   data(){
     return{
       loading: false,
-      html:"",
       text:"",
       tags:[],
       json:[],
@@ -69,12 +77,28 @@ export default {
       Data:[],
       content: '',
       axiosurl:'',
-      top:0
       // aaa:'swagger/project_api/swagger.json',
       // bbb:'https://api.ee.spdqd.test.spdio.com/'
+      myBackToTopStyle: {
+        'right': '100px',
+        'bottom': '150px',
+        'width': '40px',
+        'height': '40px',
+        'border-radius': '20px',
+        'line-height': '40px', 
+        'background': '#fff'
+      }
     }
   },
     methods:{
+       
+      clear(){
+        this.content='';
+        this.text='';
+        this.axiosurl='';
+
+
+      },
       compiledMarkdown: function() {
       return marked(this.str, {});//第一个参数是你的markdown文本 第二个参数是选项
     },
@@ -1287,7 +1311,6 @@ export default {
           }
         }
         console.log(str)
-        // this.html = require('marked')(str)
         this.content=str
         return str;
       }
