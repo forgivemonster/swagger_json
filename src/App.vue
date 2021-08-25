@@ -5,9 +5,6 @@
   <div style="width: 40%;height:100%;float:left;display: inline-block;margin-left:10px;">
     <div>
     <div style="width: 80%;float:left">
-      <!-- <a-input placeholder="输入swagger.json的接口地址" />
-    <a-button size="small" type="primary" @click="handclick()" icon="file-add">anxios</a-button> -->
-    
      <a-input-search
       placeholder="输入swagger.json的接口地址"
       enter-button="请求JSON"
@@ -37,14 +34,11 @@
     <markdown-it-vue class="md-body" :content="content"/>
   </div>
 </div>
-<el-tooltip placement="top" content="返回顶部">
-      <back-to-top 
-        transitionName="fade"
-        :customStyle="myBackToTopStyle" 
-        :visibilityHeight="300" 
-        :backPosition="50">
-      </back-to-top>
-    </el-tooltip>
+<div>
+    <a-back-top />
+    <strong style="color:rgba(64, 64, 64, 0.6)"> </strong>
+  </div>
+
 </div>
 
 </template>
@@ -55,17 +49,14 @@ import marked from 'marked'
 import {Button} from 'ant-design-vue'
 import MarkdownItVue from 'markdown-it-vue'
 import 'markdown-it-vue/dist/markdown-it-vue.css'
-import BackToTop from './BackToTop.vue'
 
 Vue.component("axios",axios);
 Vue.use(Button);
 
 export default {
   components: {
-    BackToTop,
     MarkdownItVue
   },
-  // components: { bianli },
   data(){
     return{
       loading: false,
@@ -78,7 +69,6 @@ export default {
       content: '',
       axiosurl:'',
       // aaa:'swagger/project_api/swagger.json',
-      // bbb:'https://api.ee.spdqd.test.spdio.com/'
       myBackToTopStyle: {
         'right': '100px',
         'bottom': '150px',
@@ -102,14 +92,6 @@ export default {
       compiledMarkdown: function() {
       return marked(this.str, {});//第一个参数是你的markdown文本 第二个参数是选项
     },
-      // switchJs(){
-      //   this.Data=JSON.parse(this.text);
-      //   this.tags=this.Data.tags
-      //   this.json=this.Data
-      //   this.paths=this.Data.paths
-      //   this.schemas=this.Data.components.schemas
-      //   // console.log(this.paths)
-      // },
       download(filename,filecontent){
         let content = new Blob([filecontent])
         let  urlObject = window.URL || window.webkitURL || window
@@ -122,19 +104,27 @@ export default {
       },
       
       handclick(){
-      axios.get(this.axiosurl).then(res=>
+        axios.get(this.axiosurl).then(res=>
       {
-         alert("already")
+        this.$notification.open({
+        message: '请求成功',
+        description:
+          '接下来使用点击转换按钮转换markdown',
+        icon: <a-icon type="smile" style="color: #108ee9" />,
+      });
          this.text=JSON.stringify(res.data)
-        // this.tags=res.data.tags
-        // this.json=res.data
-        // this.paths=res.data.paths
-        // this.schemas=res.data.components.schemas
+      }).catch((err) =>{
+        console.log(err)
+        this.$notification.open({
+        message: '请求失败',
+        description:
+          '检查接口是否正确或者后端是否允许跨域',
+        icon: <a-icon type="smile" style="color: #108ee9" />,
+      });
       })
       },
       show(){
         var str = "";
-
         this.Data=JSON.parse(this.text);
         this.tags=this.Data.tags
         this.json=this.Data
