@@ -104,7 +104,8 @@ export default {
     methods:{
         handleClick(items) {
           var name = items.name.toLowerCase()
-          window.location.href="#"+items.description+"-"+name;
+          var description = items.description.toLowerCase()
+          window.location.href="#"+description+"-"+name;
       // console.log("#"+items.description+"-"+items.name);
     },
       clear(){
@@ -112,8 +113,6 @@ export default {
         this.text='';
         this.axiosurl='';
         this.Data=''
-
-
       },
       compiledMarkdown: function() {
       return marked(this.str, {});//第一个参数是你的markdown文本 第二个参数是选项
