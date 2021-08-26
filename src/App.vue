@@ -2,6 +2,22 @@
 <div>
 
 <div>
+
+<div style="width:auto;height:100%;float:left" >
+  <div style="width:256px;display: flex;justify-content: center;align-items: center;" v-if="this.Data.tags">
+    <img src="vue.jpeg" width="43px">
+  </div>
+<a-affix :offset-top="top" >
+  <div v-if="this.Data.tags">
+    <a-menu style="width: 256px" mode="vertical" >
+<a-menu-item :key="index" v-for="(items,index) in this.Data.tags" @click="handleClick(items)">
+    {{items.description}} {{items.name}}
+</a-menu-item>
+    </a-menu>
+  </div>
+    </a-affix>
+  </div>
+
   <div style="width: 40%;height:100%;float:left;display: inline-block;margin-left:10px;">
     <div>
     <div style="width: 80%;float:left">
@@ -25,7 +41,7 @@
     </div>
   </div>
 
-   <div style="width: 59%;float:left;display: inline-block;height: 850px;">
+   <div style="width: 40%;float:left;display: inline-block;height: 850px;">
      <a-space>
      <a-button  type="danger" icon="download"  @click="download('swagger.md',content)" size="large">导出</a-button>
      <a-button  type="danger" icon="sync"  @click="clear()" size="large">清空</a-button>
@@ -39,7 +55,12 @@
     <strong style="color:rgba(64, 64, 64, 0.6)"> </strong>
   </div>
 
+
+
+
+
 </div>
+
 
 </template>
 <script>
@@ -68,24 +89,29 @@ export default {
       Data:[],
       content: '',
       axiosurl:'',
+      top: 10,
       // aaa:'swagger/project_api/swagger.json',
-      myBackToTopStyle: {
-        'right': '100px',
-        'bottom': '150px',
-        'width': '40px',
-        'height': '40px',
-        'border-radius': '20px',
-        'line-height': '40px', 
-        'background': '#fff'
-      }
+      current: ['mail'],
+      openKeys: ['sub1'],
     }
   },
+    watch: {
+    openKeys(val) {
+      console.log('openKeys', val);
+      },
+    },
+
     methods:{
-       
+        handleClick(items) {
+          var name = items.name.toLowerCase()
+          window.location.href="#"+items.description+"-"+name;
+      // console.log("#"+items.description+"-"+items.name);
+    },
       clear(){
         this.content='';
         this.text='';
         this.axiosurl='';
+        this.Data=''
 
 
       },
@@ -119,7 +145,7 @@ export default {
         message: '请求失败',
         description:
           '检查接口是否正确或者后端是否允许跨域',
-        icon: <a-icon type="smile" style="color: #108ee9" />,
+        icon: <a-icon type="frown" style="color: #108ee9" />,
       });
       })
       },
@@ -386,7 +412,7 @@ export default {
 
             if(this.paths[forpaths].post){
               if(this.paths[forpaths].post.tags==this.tags[item].name ){
-                str+="\n\n"+"**接口地址："+forpaths+"**"+"\n\n"+"* **请求方式：post**"+"\n\n"
+                str+="\n\n"+"### 接口地址："+forpaths+"\n\n"+"* **请求方式：post**"+"\n\n"
                 if(this.paths[forpaths].post.summary){
                   str+="* **接口功能："+this.paths[forpaths].post.summary+"**"+"\n\n"
                 }
@@ -729,7 +755,7 @@ export default {
 
             if(this.paths[forpaths].put){
                if(this.paths[forpaths].put.tags==this.tags[item].name ){
-                 str+="\n\n"+"**接口地址："+forpaths+"**"+"\n\n"+"* **请求方式：put**"+"\n\n"
+                 str+="\n\n"+"### 接口地址："+forpaths+"\n\n"+"* **请求方式：put**"+"\n\n"
                  if(this.paths[forpaths].put.summary){
                   str+="* **接口功能："+this.paths[forpaths].put.summary+"**"+"\n\n"
                  }
@@ -1099,7 +1125,7 @@ export default {
 
             if(this.paths[forpaths].delete){
               if(this.paths[forpaths].delete.tags==this.tags[item].name ){
-                 str+="\n\n"+"**接口地址："+forpaths+"**"+"\n\n"+"* **请求方式：delete**"+"\n\n"
+                 str+="\n\n"+"### 接口地址："+forpaths+"\n\n"+"* **请求方式：delete**"+"\n\n"
                  if(this.paths[forpaths].delete.summary){
                    str+="* **接口功能："+this.paths[forpaths].delete.summary+"**"+"\n\n"
                  }
@@ -1300,7 +1326,7 @@ export default {
             }
           }
         }
-        console.log(str)
+        // console.log(str)
         this.content=str
         return str;
       }
